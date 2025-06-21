@@ -1,151 +1,111 @@
-    <!DOCTYPE html>
-<html lang="en">
+<?php
+require_once 'config/db.php';
+
+// Get all emotions for dashboard
+$stmt = $conn->query("SELECT * FROM emotions ORDER BY timestamp DESC LIMIT 7");
+$recent_emotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Get activities for recommendations
+$stmt = $conn->query("SELECT * FROM activities");
+$activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+<!DOCTYPE html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemantauan Emosi Harian - Dashboard</title>
+    <title>Dashboard - Pemantauan Emosi Harian</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Pemantauan Emosi</h2>
-        <ul>
-            <li><a href="index.php">Dashboard</a></li>
-            <li><a href="record.php">Pencatat Emosi</a></li>
-            <li><a href="recommendations.php">Rekomendasi Aktivitas</a></li>
-        </ul>
-    </div>
-<?php
-require_once 'config.php';
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="active">
+            <div class="sidebar-header">
+                <h3>Pemantauan Emosi</h3>
+            </div>
 
-try {
-    // Get emotion records
-    $stmt = $pdo->query("SELECT * FROM emotion_records ORDER BY created_at DESC LIMIT 10");
-    $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            <ul class="list-unstyled components">
+                <li class="active">
+                    <a href="index.php"><i class="fas fa-home"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="record.php"><i class="fas fa-pen"></i> Pencatat Emosi</a>
+                </li>
+                <li>
+                    <a href="recommendations.php"><i class="fas fa-lightbulb"></i> Rekomendasi</a>
+                </li>
+                <li>
+                    <a href="about.php"><i class="fas fa-info-circle"></i> Tentang</a>
+                </li>
+            </ul>
+        </nav>
 
-    // Get emotion counts
-    $emotionCounts = [
-        'senang' => 0,
-        'cemas' => 0,
-        'marah' => 0,
-        'sedih' => 0
-    ];
+        <!-- Page Content -->
+        <div id="content" class="page-content">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <h4 class="navbar-brand">Dashboard</h4>
+                </div>
+            </nav>
 
-    // Only count emotions if records exist
-    if (!empty($records)) {
-        foreach ($records as $record) {
-            // Ensure emotion_type exists and is valid
-            if (isset($record['emotion_type']) && array_key_exists($record['emotion_type'], $emotionCounts)) {
-                $emotionCounts[$record['emotion_type']]++;
-            }
-        }
-    }
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Grafik Tren Emosi</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="emotionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    // Get recent activities
-    $stmt = $pdo->query("SELECT * FROM activity_recommendations ORDER BY created_at DESC LIMIT 5");
-    $recentActivities = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-} catch (PDOException $e) {
-    // If there's an error, set default values
-    $records = [];
-    $recentActivities = [];
-    $emotionCounts = [
-        'senang' => 0,
-        'cemas' => 0,
-        'marah' => 0,
-        'sedih' => 0
-    ];
-}
-?>
-    <div class="main-content">
-        <h1>Dashboard</h1>
-        
-        <!-- Emotion Trend Chart -->
-        <div class="card">
-            <h2>Tren Emosi</h2>
-            <div class="chart-container">
-                <canvas id="emotionChart"></canvas>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Emosi Terakhir</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Tanggal</th>
+                                                <th>Jenis Emosi</th>
+                                                <th>Intensitas</th>
+                                                <th>Catatan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentEmotions">
+                                            <?php foreach ($recent_emotions as $emotion): ?>
+                                            <tr>
+                                                <td><?= date('d M Y', strtotime($emotion['timestamp'])) ?></td>
+                                                <td><?= ucfirst($emotion['emotion_type']) ?></td>
+                                                <td><?= $emotion['intensity'] ?></td>
+                                                <td><?= $emotion['notes'] ?></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <!-- Recent Activity Logs -->
-        <div class="card">
-            <h2>Riwayat Emosi Terbaru</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Jenis Emosi</th>
-                        <th>Deskripsi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($records as $record): ?>
-                    <tr>
-                        <td><?php echo date('d M Y H:i', strtotime($record['created_at'])); ?></td>
-                        <td><?php echo ucfirst($record['emotion_type']); ?></td>
-                        <td><?php echo $record['description']; ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Recent Recommendations -->
-        <div class="card">
-            <h2>Rekomendasi Aktivitas</h2>
-            <div id="recommendation-list"></div>
-        </div>
     </div>
 
-    <script src="assets/js/recommendations.js"></script>
-    <script>
-        // Initialize emotion chart
-        const ctx = document.getElementById('emotionChart').getContext('2d');
-        const emotionChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Senang', 'Cemas', 'Marah', 'Sedih'],
-                datasets: [{
-                    label: 'Jumlah Emosi',
-                    data: [
-                        <?php echo $emotionCounts['senang']; ?>,
-                        <?php echo $emotionCounts['cemas']; ?>,
-                        <?php echo $emotionCounts['marah']; ?>,
-                        <?php echo $emotionCounts['sedih']; ?>
-                    ],
-                    backgroundColor: [
-                        '#4CAF50',
-                        '#FFC107',
-                        '#FF5722',
-                        '#2196F3'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        // Initialize recommendations
-        document.addEventListener('DOMContentLoaded', () => {
-            // Show recommendations for the most common emotion
-            const mostCommonEmotion = Object.entries(<?php echo json_encode($emotionCounts); ?>)
-                .reduce((a, b) => a[1] > b[1] ? a : b)[0];
-            
-            // If no emotions recorded yet, show recommendations for 'senang'
-            if (mostCommonEmotion === undefined) {
-                showRecommendations('senang', 'recommendation-list');
-            } else {
-                showRecommendations(mostCommonEmotion, 'recommendation-list');
-            }
-        });
-    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/app.js"></script>
 </body>
 </html>

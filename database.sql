@@ -1,38 +1,33 @@
--- Database: emotion_tracker
+-- Database schema for Emotion Monitoring Application
 
-CREATE DATABASE IF NOT EXISTS emotion_tracker;
-USE emotion_tracker;
+CREATE DATABASE IF NOT EXISTS emotion_monitoring;
+USE emotion_monitoring;
 
--- Table structure for emotion_records
-CREATE TABLE IF NOT EXISTS emotion_records (
+-- Table for storing user emotions
+CREATE TABLE IF NOT EXISTS emotions (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    emotion_type VARCHAR(50) NOT NULL,
-    description TEXT NOT NULL,
-    cause TEXT,
-    intensity INT,
-    coping TEXT,
+    emotion_type ENUM('senang', 'cemas', 'marah', 'sedih') NOT NULL,
+    intensity INT NOT NULL CHECK (intensity BETWEEN 1 AND 5),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    notes TEXT
+);
+
+-- Table for storing recommended activities
+CREATE TABLE IF NOT EXISTS activities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    emotion_type ENUM('senang', 'cemas', 'marah', 'sedih') NOT NULL,
+    activity_name VARCHAR(255) NOT NULL,
+    description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS activity_recommendations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    emotion_type VARCHAR(50) NOT NULL,
-    activity TEXT NOT NULL,
-    description TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Insert sample data
-INSERT INTO activity_recommendations (emotion_type, activity, description) VALUES
-('senang', 'Bermain musik atau alat musik favorit', 'Meningkatkan mood positif dan kreativitas'),
-('senang', 'Membaca buku favorit', 'Membuat pikiran lebih tenang dan damai'),
-('senang', 'Berkebun atau menanam tanaman', 'Membuat suasana hati lebih tenang dan produktif'),
-('cemas', 'Meditasi atau yoga ringan', 'Membantu menenangkan pikiran dan mengurangi stres'),
-('cemas', 'Mendengarkan musik relaksasi', 'Membantu menenangkan pikiran dan mengurangi kecemasan'),
-('cemas', 'Menggambar atau membuat karya seni', 'Membantu mengekspresikan perasaan dan mengurangi kecemasan'),
-('marah', 'Berolahraga atau berlari', 'Membantu mengeluarkan energi negatif dan menenangkan pikiran'),
-('marah', 'Mengambil waktu untuk bernafas dalam-dalam', 'Membantu mengontrol emosi dan menenangkan diri'),
-('marah', 'Menulis jurnal atau mengungkapkan perasaan', 'Membantu mengelola emosi dan mengekspresikan perasaan'),
-('sedih', 'Bercerita pada teman atau keluarga', 'Membantu mengurangi beban dan merasa didukung'),
-('sedih', 'Membuat daftar hal-hal yang disyukuri', 'Membantu mengubah fokus dan meningkatkan mood'),
-('sedih', 'Membuat karya seni atau menulis', 'Membantu mengekspresikan perasaan dan mengurangi sedih');
+-- Insert some sample activities
+INSERT INTO activities (emotion_type, activity_name, description) VALUES
+('cemas', 'Meditasi', 'Lakukan meditasi selama 10 menit untuk menenangkan pikiran'),
+('cemas', 'Mendengarkan Musik', 'Dengarkan musik yang menenangkan'),
+('marah', 'Olahraga', 'Lakukan olahraga ringan untuk mengalihkan energi negatif'),
+('marah', 'Menulis', 'Tuliskan perasaan Anda dalam jurnal'),
+('sedih', 'Berbicara dengan Orang Terdekat', 'Bicarakan perasaan Anda dengan orang yang dipercaya'),
+('sedih', 'Membaca', 'Baca buku atau artikel yang menginspirasi'),
+('senang', 'Berbagi', 'Bagikan kebahagiaan Anda dengan orang lain'),
+('senang', 'Mencoba Hal Baru', 'Coba aktivitas baru yang menarik');
