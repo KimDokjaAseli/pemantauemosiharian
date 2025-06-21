@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmoTrack - Dashboard Emosi</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <h3>EmoTrack</h3>
+      </div>
+      <ul class="components">
+        <li><a href="index.html">🏠 Home</a></li>
+        <li><a href="record.html">📝 Catat Emosi</a></li>
+        <li><a href="about.html">❓ Tentang</a></li>
+      </ul>
+    </nav>
+
+    <!-- Konten -->
+    <div id="content">
+      <nav class="navbar">
+        <div class="navbar-brand">Dashboard Emosi</div>
+      </nav>
+
+      <div class="page-content">
+        <div class="card">
+          <div class="card-header">
+            <h5>Grafik Emosi Harian</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="emotionChart" height="120"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h5>Catat Emosi Hari Ini</h5>
+          </div>
+          <div class="card-body">
+            <form id="emotionForm">
+              <label class="form-label">Emosi:</label>
+              <select class="form-select" name="emotion_type">
+                <option value="senang">Senang</option>
+                <option value="cemas">Cemas</option>
+                <option value="marah">Marah</option>
+                <option value="sedih">Sedih</option>
+              </select>
+
+              <label class="form-label">Intensitas (1-5):</label>
+              <input type="range" class="form-range" name="intensity" min="1" max="5" />
+
+              <label class="form-label">Catatan:</label>
+              <textarea class="form-control" name="notes" placeholder="Opsional..."></textarea>
+
+              <button type="submit" class="btn-primary">Simpan Emosi</button>
+            </form>
+          </div>
+        </div>
+
+        <div id="recommendationsSection" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h5>Rekomendasi Aktivitas</h5>
+            </div>
+            <div class="card-body">
+              <div id="activityList" class="activities-list">
+                <!-- Placeholder kegiatan -->
+                <div class="activity-card">
+                  <h5>Meditasi</h5>
+                  <p>Lakukan meditasi selama 10 menit untuk menenangkan pikiran.</p>
+                </div>
+                <div class="activity-card">
+                  <h5>Mendengarkan Musik</h5>
+                  <p>Dengarkan musik yang menenangkan.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

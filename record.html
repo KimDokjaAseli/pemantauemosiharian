@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmoTrack - Catat Emosi</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <h3>EmoTrack</h3>
+      </div>
+      <ul class="components">
+        <li><a href="index.html">🏠 Home</a></li>
+        <li><a href="record.html" class="active">📝 Catat Emosi</a></li>
+        <li><a href="about.html">❓ Tentang</a></li>
+      </ul>
+    </nav>
+
+    <!-- Konten -->
+    <div id="content">
+      <nav class="navbar">
+        <div class="navbar-brand">Form Catatan Emosi</div>
+      </nav>
+
+      <div class="page-content">
+        <div class="card">
+          <div class="card-header">
+            <h5>Catat Emosi</h5>
+          </div>
+          <div class="card-body">
+            <form id="emotionForm">
+              <label class="form-label">Emosi:</label>
+              <select class="form-select" name="emotion_type">
+                <option value="senang">Senang</option>
+                <option value="cemas">Cemas</option>
+                <option value="marah">Marah</option>
+                <option value="sedih">Sedih</option>
+              </select>
+
+              <label class="form-label">Intensitas (1-5):</label>
+              <input type="range" class="form-range" name="intensity" min="1" max="5" />
+
+              <label class="form-label">Catatan:</label>
+              <textarea class="form-control" name="notes" placeholder="Opsional..."></textarea>
+
+              <button type="submit" class="btn-primary">Simpan Emosi</button>
+            </form>
+          </div>
+        </div>
+
+        <div id="recommendationsSection" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h5>Rekomendasi Aktivitas</h5>
+            </div>
+            <div class="card-body">
+              <div id="activityList" class="activities-list">
+                <div class="activity-card">
+                  <h5>Berbicara dengan Teman</h5>
+                  <p>Ceritakan isi hati Anda ke orang yang dipercaya.</p>
+                </div>
+                <div class="activity-card">
+                  <h5>Membaca Buku</h5>
+                  <p>Baca buku yang membuat hati Anda tenang.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
